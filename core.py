@@ -1,7 +1,9 @@
 import logging
+import torch
+from torch.utils.data import TensorDataset, DataLoader, random_split
+
 logger = logging.getLogger(__name__)
 def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
-    # 選擇模型並加載設定
     if(model_name == 'bert'):
         from transformers import BertConfig, BertForQuestionAnswering, BertTokenizer
         model_config, model_class, model_tokenizer = (BertConfig, BertForQuestionAnswering, BertTokenizer)
@@ -10,6 +12,16 @@ def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
         tokenizer = model_tokenizer(vocab_file=vocab_file_path)
         return model, tokenizer
 
+def make_torch_dataset(*features):
+    tensor_features = []
+    for feature in features:
+        tensor_feature = torch.tensor([f for f in feature])
+        tensor_features.append(tensor_feature)
+    return TensorDataset(*tensor_features)
+
+def make_torch_data_loader(torch_dataset,**options):
+    #options: batch_size=int,shuffle=bool
+    return DataLoader(torch_dataset,**options)
 
 def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
     """convert single string data to bert input, also deal with long context."""

@@ -1,4 +1,4 @@
-from core import use_model,convert_single_data_to_feature
+from core import use_model,convert_single_data_to_feature,make_torch_data_loader,make_torch_dataset
 import os
 import logging
 logging.getLogger('core').setLevel(logging.DEBUG)
@@ -18,3 +18,5 @@ if __name__ == "__main__":
     question = "什麼是笑話"
 
     token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list = convert_single_data_to_feature(context,question,tokenizer,doc_strike=128)
+    qc_dataset = make_torch_dataset(token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list)
+    qc_data_loader = make_torch_data_loader(qc_dataset,batch_size=3)
