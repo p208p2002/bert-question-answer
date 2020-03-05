@@ -60,6 +60,11 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
         assert len(token_embeddings) == bert_input_len_limit
         assert len(token_embeddings) == len(segment_embeddings) == len(attention_embeddings)
 
+        # save to list
+        token_embeddings_list.append(token_embeddings)
+        segment_embeddings_lsit.append(segment_embeddings)
+        attention_embeddings_list.append(attention_embeddings)
+
         # already process the end of input context
         if(len(input_context_ids) < window_size):
             break
