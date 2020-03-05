@@ -11,8 +11,8 @@ def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
         return model, tokenizer
 
 
-def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
-    """convert string data to bert input, also deal with long context."""
+def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
+    """convert single string data to bert input, also deal with long context."""
     def convert_text_to_ids(text):
         return tokenizer.convert_tokens_to_ids(tokenizer.tokenize(text))
     
