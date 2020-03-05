@@ -19,8 +19,6 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
     # def
     bert_input_len_limit = 512 # bert input length limit
     special_token_length = 3 # [CLS]A[SEP]B[SEP]
-    # cls_token = '[CLS]'
-    # sep_token = '[SEP]'
 
     #
     len_limit_remain = bert_input_len_limit - len(question)
@@ -38,7 +36,7 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
     # bert inputs
     token_embeddings_list = []
     segment_embeddings_lsit = []
-    # attention_embeddings_list = []
+    attention_embeddings_list = []
     logger.debug("convert to feature and process doc strike\n")
     while(True):
         next_index = index+doc_strike
@@ -48,9 +46,19 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
         logger.debug("input context len:%d"%(len(input_context_ids)))
 
         token_embeddings = tokenizer.build_inputs_with_special_tokens(input_context_ids,question_ids)
-        logger.debug('input token length:%d\n',len(token_embeddings))
+        segment_embeddings = [0]*(len(input_context_ids)+2) + [1]*(len(question_ids)+1)
+        attention_embeddings = [1]*len(token_embeddings)
+        logger.debug('input token length:%d',len(token_embeddings))
 
-        assert len(token_embeddings) <= 512
+        # padding
+        padding_length = bert_input_len_limit - len(token_embeddings)
+        logger.debug("padding_length:%d\n"%(padding_length))
+        token_embeddings = token_embeddings + [0]*padding_length
+        segment_embeddings = segment_embeddings + [0]*padding_length
+        attention_embeddings = attention_embeddings + [0]*padding_length
+
+        assert len(token_embeddings) == bert_input_len_limit
+        assert len(token_embeddings) == len(segment_embeddings) == len(attention_embeddings)
 
         # already process the end of input context
         if(len(input_context_ids) < window_size):
@@ -58,6 +66,6 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
 
         #
         index = next_index
-    #
+    
     return token_embeddings_list
 
