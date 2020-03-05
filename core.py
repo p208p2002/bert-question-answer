@@ -20,7 +20,7 @@ def make_torch_dataset(*features):
     return TensorDataset(*tensor_features)
 
 def make_torch_data_loader(torch_dataset,**options):
-    #options: batch_size=int,shuffle=bool
+    # options: batch_size=int,shuffle=bool
     return DataLoader(torch_dataset,**options)
 
 def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
