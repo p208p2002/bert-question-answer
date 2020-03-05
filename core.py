@@ -19,41 +19,41 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
     # def
     bert_input_len_limit = 512 # bert input length limit
     special_token_length = 3 # [CLS]A[SEP]B[SEP]
-    cls_token = '[CLS]'
-    sep_token = '[SEP]'
+    # cls_token = '[CLS]'
+    # sep_token = '[SEP]'
 
     #
-    question = question[:100] # limit question length
     len_limit_remain = bert_input_len_limit - len(question)
     context_ids = convert_text_to_ids(context)
+    question_ids = convert_text_to_ids(question)
+    question_ids = question_ids[:100] # limit question length
 
-    logger.debug(context_ids)
-    logger.debug(tokenizer.decode(context_ids))
-    logger.debug(len_limit_remain)
+    logger.debug("len_limit_remain:%d"%(len_limit_remain))
 
     next_index = 0
     index = next_index
     window_size = len_limit_remain - special_token_length
-    logger.debug("context length:%d"%(len(context)))
+    logger.debug("context length:%d"%(len(context_ids)))
+
+    # bert inputs
     token_embeddings_list = []
+    segment_embeddings_lsit = []
+    # attention_embeddings_list = []
+    logger.debug("convert to feature and process doc strike\n")
     while(True):
         next_index = index+doc_strike
         logger.debug("start_index:%d window_size:%d next_index:%d"%(index, window_size, next_index))
         
-        input_context = context[index:index+window_size]
-        logger.debug("input context len:%d"%(len(input_context)))
+        input_context_ids = context_ids[index:index+window_size]
+        logger.debug("input context len:%d"%(len(input_context_ids)))
 
-        full_input = cls_token + input_context + sep_token + question + sep_token        
-        logger.debug(full_input)
-        
-        token_embeddings = convert_text_to_ids(full_input)
-        assert len(token_embeddings) <= bert_input_len_limit
-        token_embeddings_list .append(token_embeddings)
-
+        token_embeddings = tokenizer.build_inputs_with_special_tokens(input_context_ids,question_ids)
         logger.debug('input token length:%d\n',len(token_embeddings))
 
+        assert len(token_embeddings) <= 512
+
         # already process the end of input context
-        if(len(input_context) < window_size):
+        if(len(input_context_ids) < window_size):
             break
 
         #
