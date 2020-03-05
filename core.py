@@ -72,9 +72,9 @@ def convert_data_to_feature(context,question,tokenizer,doc_strike=128):
         #
         index = next_index
     
-    return {
-        "token_embeddings_list":token_embeddings_list,
-        "segment_embeddings_lsit":segment_embeddings_lsit,
-        "attention_embeddings_list":attention_embeddings_list
-    }
+    return (
+        token_embeddings_list,
+        segment_embeddings_lsit,
+        attention_embeddings_list
+    )
 
