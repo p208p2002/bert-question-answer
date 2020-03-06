@@ -1,22 +1,56 @@
-from core import use_model,convert_single_data_to_feature,make_torch_data_loader,make_torch_dataset
+from core import use_model,convert_single_data_to_feature,make_torch_data_loader,make_torch_dataset,to_list, \
+    _get_best_indexes,_check_has_skip_token,_check_segment_type_is_b
 import os
 import logging
-logging.getLogger('core').setLevel(logging.DEBUG)
-
-if __name__ == "__main__":
-    
+import torch
+if __name__ == "__main__":    
+    # log & env setting
+    logging.getLogger('core').setLevel(logging.DEBUG)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+
+    # init model
     model_setting = {
         "model_name":"bert", 
-        "config_file_path":"trained_model/config.json", 
-        "model_file_path":"trained_model/pytorch_model.bin", 
+        "config_file_path":"trained_model/", 
+        "model_file_path":"trained_model/", 
         "vocab_file_path":"trained_model/vocab.txt"
     }    
     model,tokenizer = use_model(**model_setting)
 
-    context = "「部落是個笑話！」 希瓦娜斯・風行者在撂下這樣的狠話之後，便背棄自己曾經對部落立下的誓言抽身離去。如今，黑暗女王與她的部下正暗中密謀著，而部落與聯盟則是努力想要追查出她的下一步行動，就連她的親姊姊艾蘭里亞也參與其中。身為領袖的安杜因國王身負重責大任且疲於奔命，因此，他決定委託這位虛無精靈以及大主教圖拉揚去調查希瓦娜斯的下落。 部落現在正處在命運的十字路口。各個陣營決定組成聯合議會，不再延續設立大酋長的傳統。索爾、洛索瑪・塞隆、貝恩・血蹄、首席秘法師薩莉瑟拉和許多大家所熟識的角色都紛紛挺身而出，想要貢獻一己之力。但是無數的威脅正籠罩著部落，眾人彼此之間也充滿了猜忌與懷疑。 在塔蘭姬（身為贊達拉女王的她是一名不可或缺的盟友）險些遭到刺殺之後，議會眼看就要土崩瓦解，索爾與其他部落的領袖因此被迫採取行動。他們提拔至今仍無法忘懷瓦洛克・薩魯法爾之死的澤坎，並賦予他一件重要的任務，讓他去協助塔蘭姬，看看究竟是什麼樣的威脅正在向她逼近。 與此同時，納薩諾斯・凋零者和西拉・月守接獲黑暗女王的命令，準備採取一次極為大膽的行動，那就是殺害食人妖的死亡羅亞「伯昂撒姆第」。 澤坎和塔蘭姬出發拯救伯昂撒姆第的這趟旅途，將決定部落是否能成長茁壯並對抗即將襲來的黑暗，也將幫助他們兩個重新認識自己並且不再迷惘。如果他們無法成功拯救部落的盟友和這位狡詐的神靈，後果勢必不堪設想；但倘若此次的計畫成功，將可以幫助部落重拾那段曾經堅強的過往。「部落是個笑話！」 希瓦娜斯・風行者在撂下這樣的狠話之後，便背棄自己曾經對部落立下的誓言抽身離去。如今，黑暗女王與她的部下正暗中密謀著，而部落與聯盟則是努力想要追查出她的下一步行動，就連她的親姊姊艾蘭里亞也參與其中。身為領袖的安杜因國王身負重責大任且疲於奔命，因此，他決定委託這位虛無精靈以及大主教圖拉揚去調查希瓦娜斯的下落。 部落現在正處在命運的十字路口。各個陣營決定組成聯合議會，不再延續設立大酋長的傳統。索爾、洛索瑪・塞隆、貝恩・血蹄、首席秘法師薩莉瑟拉和許多大家所熟識的角色都紛紛挺身而出，想要貢獻一己之力。但是無數的威脅正籠罩著部落，眾人彼此之間也充滿了猜忌與懷疑。 在塔蘭姬（身為贊達拉女王的她是一名不可或缺的盟友）險些遭到刺殺之後，議會眼看就要土崩瓦解，索爾與其他部落的領袖因此被迫採取行動。他們提拔至今仍無法忘懷瓦洛克・薩魯法爾之死的澤坎，並賦予他一件重要的任務，讓他去協助塔蘭姬，看看究竟是什麼樣的威脅正在向她逼近。 與此同時，納薩諾斯・凋零者和西拉・月守接獲黑暗女王的命令，準備採取一次極為大膽的行動，那就是殺害食人妖的死亡羅亞「伯昂撒姆第」。 澤坎和塔蘭姬出發拯救伯昂撒姆第的這趟旅途，將決定部落是否能成長茁壯並對抗即將襲來的黑暗，也將幫助他們兩個重新認識自己並且不再迷惘。如果他們無法成功拯救部落的盟友和這位狡詐的神靈，後果勢必不堪設想；但倘若此次的計畫成功，將可以幫助部落重拾那段曾經堅強的過往。"
-    question = "什麼是笑話"
+    context = "試駕車未選配PCCB陶瓷複合煞車系統，而是採用標配設定的前六活塞、後四活塞煞車卡鉗與380mm打孔通風碟盤，在這次試駕過程中我對於制動性能表現已覺得相當夠用，但如果有上賽道的需求或是想升級的車主，亦可加價選配PCCB陶瓷複合煞車系統，除了碟盤尺寸加大至前420mm、後390mm之外，陶瓷複合材質亦具備輕量化的效果，可藉此提升操控與制動效果極限"
+    question = "可以選配什麼"
 
     token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list = convert_single_data_to_feature(context,question,tokenizer,doc_strike=128)
     qc_dataset = make_torch_dataset(token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list)
-    qc_data_loader = make_torch_data_loader(qc_dataset,batch_size=3)
+    qc_data_loader = make_torch_data_loader(qc_dataset,batch_size=1)
+
+    for index,batch in enumerate(qc_data_loader):
+        start_scores, end_scores = model(input_ids=batch[0],token_type_ids=batch[1],attention_mask=batch[2])
+
+        start_scores = to_list(start_scores.squeeze(0))
+        end_scores = to_list(end_scores.squeeze(0))
+
+        start_indexs = _get_best_indexes(start_scores,n_best_size=10)
+        end_indexs = _get_best_indexes(end_scores,n_best_size=10)
+        input_decode = tokenizer.convert_ids_to_tokens(batch[0].squeeze(0))
+        
+        logger.debug(input_decode)
+        logger.debug(to_list(batch[0].squeeze(0)))
+        logger.debug(start_indexs)
+        logger.debug(end_indexs)
+
+        for start_index in start_indexs:
+            for end_index in end_indexs:
+                end_index += 1
+                answer_token = input_decode[start_index:end_index]
+                if(len(answer_token) == 0):
+                    continue
+                elif(_check_has_skip_token(check_tokens = answer_token, skip_tokens = ['[CLS]','[SEP]','[PAD]','[UNK]'])):
+                    continue
+                elif(_check_segment_type_is_b(start_index,end_index,batch[1].squeeze(0))):
+                    continue
+                answer = "".join(answer_token)
+                logger.debug("batch_index:%d"%(index))
+                logger.debug("start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"%(start_index,start_scores[start_index],end_index,end_scores[end_index],answer[:16]))
