@@ -45,7 +45,7 @@ if __name__ == "__main__":
             for end_index in end_indexs:
                 end_index += 1
                 answer_token = input_decode[start_index:end_index]
-                if(len(answer_token) == 0):
+                if(len(answer_token) == 0 or len(answer_token)>20):
                     continue
                 elif(_check_has_skip_token(check_tokens = answer_token, skip_tokens = ['[CLS]','[SEP]','[PAD]','[UNK]'])):
                     continue
@@ -53,4 +53,4 @@ if __name__ == "__main__":
                     continue
                 answer = "".join(answer_token)
                 logger.debug("batch_index:%d"%(index))
-                logger.debug("start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"%(start_index,start_scores[start_index],end_index,end_scores[end_index],answer[:16]))
+                logger.debug("start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"%(start_index,start_scores[start_index],end_index,end_scores[end_index],answer))
