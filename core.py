@@ -9,7 +9,7 @@ def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
         model_config, model_class, model_tokenizer = (BertConfig, BertForQuestionAnswering, BertTokenizer)
         config = model_config.from_pretrained(config_file_path)
         model = model_class.from_pretrained(model_file_path, from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
-        tokenizer = model_tokenizer(vocab_file=vocab_file_path,do_lower_case=False)
+        tokenizer = model_tokenizer(vocab_file=vocab_file_path,do_lower_case=True)
         return model, tokenizer
 
 def make_torch_dataset(*features):
@@ -65,7 +65,7 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
 
     #
     len_limit_remain = bert_input_len_limit - len(question)
-    context_ids,context_str_tokens = convert_text_to_ids(context,require_str_token=True)
+    context_ids = convert_text_to_ids(context)
     question_ids = convert_text_to_ids(question)
     question_ids = question_ids[:100] # limit question length
 
@@ -80,14 +80,12 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
     token_embeddings_list = []
     segment_embeddings_lsit = []
     attention_embeddings_list = []
-    raw_input_token_list = []
     logger.debug("convert to feature and process doc strike\n")
     while(True):
         next_index = index+doc_strike
         logger.debug("start_index:%d window_size:%d next_index:%d"%(index, window_size, next_index))
         
         input_context_ids = context_ids[index:index+window_size]
-        input_context_strs = context_str_tokens[index:index+window_size]
         logger.debug("input context len:%d"%(len(input_context_ids)))
 
         token_embeddings = tokenizer.build_inputs_with_special_tokens(input_context_ids,question_ids)
@@ -109,7 +107,6 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
         token_embeddings_list.append(token_embeddings)
         segment_embeddings_lsit.append(segment_embeddings)
         attention_embeddings_list.append(attention_embeddings)
-        raw_input_token_list.append(input_context_strs)
 
         # already process the end of input context
         if(len(input_context_ids) < window_size):
@@ -122,6 +119,5 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
         token_embeddings_list,
         segment_embeddings_lsit,
         attention_embeddings_list,
-        raw_input_token_list
     )
 
