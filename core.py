@@ -8,8 +8,8 @@ def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
         from transformers import BertConfig, BertForQuestionAnswering, BertTokenizer
         model_config, model_class, model_tokenizer = (BertConfig, BertForQuestionAnswering, BertTokenizer)
         config = model_config.from_pretrained(config_file_path)
-        model = model_class.from_pretrained(model_file_path, from_tf=bool('.ckpt' in 'bert-base-chinese'), config=config)
-        tokenizer = model_tokenizer(vocab_file=vocab_file_path,do_lower_case=True)
+        model = model_class.from_pretrained(model_file_path, from_tf=bool('.ckpt' in model_file_path), config=config)
+        tokenizer = model_tokenizer.from_pretrained(vocab_file_path,do_lower_case=True)
         return model, tokenizer
 
 def make_torch_dataset(*features):
@@ -67,7 +67,8 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
     len_limit_remain = bert_input_len_limit - len(question)
     context_ids = convert_text_to_ids(context)
     question_ids = convert_text_to_ids(question)
-    question_ids = question_ids[:100] # limit question length
+    # question_ids = question_ids[:100] # limit question length
+    # logger.debug(question_ids)
 
     logger.debug("len_limit_remain:%d"%(len_limit_remain))
 
