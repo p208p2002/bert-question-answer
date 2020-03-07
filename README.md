@@ -1,9 +1,5 @@
 # BERT QA
 BERT QA 問答模組
-## Usage
-- 安裝相依套件: `pip install -r requirements.txt`
-- 至[release](https://github.com/p208p2002/bert-question-answer/releases)下載預訓練模型
-- 詳細用法見example.py
 ```python
 # init BertQA
 bertQA = BertQA(model = model, tokenizer = tokenizer, device = device)
@@ -17,3 +13,8 @@ question = "陳小玉擔的工作是什麼"
 answer_results,input_decode = bertQA.ask(context,question)
 # score:2.07151 start_index:29(1.84568) end_index:31(0.22583) answer:總務長
 ```
+## Usage
+1. 安裝相依套件: `pip install -r requirements.txt`
+2. 至[release](https://github.com/p208p2002/bert-question-answer/releases)下載預訓練模型
+3. 將下載的模型放到trained_model/下
+4. 詳細用法見example.py
