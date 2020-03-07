@@ -16,5 +16,5 @@ answer_results,input_decode = bertQA.ask(context,question)
 ## Usage
 1. 安裝相依套件: `pip install -r requirements.txt`
 2. 至[release](https://github.com/p208p2002/bert-question-answer/releases)下載預訓練模型
-3. 將下載的模型放到trained_model/下
-4. 詳細用法見example.py
+3. 將下載的模型放到`trained_model/`下
+4. 詳細用法見`example.py`
