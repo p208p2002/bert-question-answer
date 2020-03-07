@@ -1,5 +1,6 @@
 # BERT QA
-BERT QA 問答模組
+- 基於BERT的問答模組
+- 自動滑窗，允許超長文本輸入
 ## Usage
 - 安裝相依套件: `pip install -r requirements.txt`
 - 至[release](https://github.com/p208p2002/bert-question-answer/releases)下載預訓練模型
