@@ -1,8 +1,8 @@
-# Bert QA
+# BERT QA
 BERT QA 問答模組
 ## Usage
 - 安裝相依套件: `pip install -r requirements.txt`
-- 至release下載預訓練模型
+- 至[release](https://github.com/p208p2002/bert-question-answer/releases)下載預訓練模型
 - 詳細用法見example.py
 ```python
 # init BertQA
