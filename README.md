@@ -9,7 +9,7 @@ question = "誰是校長"
 answer_results,input_decode = bertQA.ask(context,question)
 # score:2.17795 start_index:11(1.07034) end_index:13(1.10761) answer:王大明
 
-question = "陳小玉擔的工作是什麼"
+question = "陳小玉的工作是什麼"
 answer_results,input_decode = bertQA.ask(context,question)
 # score:2.07151 start_index:29(1.84568) end_index:31(0.22583) answer:總務長
 ```
