@@ -3,13 +3,13 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader, random_split
 
 logger = logging.getLogger(__name__)
-def use_model(model_name, config_file_path, model_file_path, vocab_file_path):
+def use_model(model_name, model_path):
     if(model_name == 'bert'):
         from transformers import BertConfig, BertForQuestionAnswering, BertTokenizer
         model_config, model_class, model_tokenizer = (BertConfig, BertForQuestionAnswering, BertTokenizer)
-        config = model_config.from_pretrained(config_file_path)
-        model = model_class.from_pretrained(model_file_path, from_tf=bool('.ckpt' in model_file_path), config=config)
-        tokenizer = model_tokenizer.from_pretrained(vocab_file_path,do_lower_case=True)
+        config = model_config.from_pretrained(model_path)
+        model = model_class.from_pretrained(model_path, from_tf=bool('.ckpt' in model_path), config=config)
+        tokenizer = model_tokenizer.from_pretrained(model_path,do_lower_case=True)
         return model, tokenizer
 
 def make_torch_dataset(*features):
