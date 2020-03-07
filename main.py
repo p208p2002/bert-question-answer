@@ -39,7 +39,7 @@ if __name__ == "__main__":
         for i,(start_scores,end_scores) in enumerate(zip(batch_start_scores,batch_end_scores)):
             start_indexs = _get_best_indexes(start_scores,n_best_size=20)
             end_indexs = _get_best_indexes(end_scores,n_best_size=20)
-            input_decode = tokenizer.convert_ids_to_tokens(batch[i][0].squeeze(0))
+            input_decode = tokenizer.convert_ids_to_tokens(batch[0][i])
         
             logger.debug(start_indexs)
             logger.debug(end_indexs)
@@ -52,7 +52,7 @@ if __name__ == "__main__":
                         continue
                     elif(_check_has_skip_token(check_tokens = answer_token, skip_tokens = ['[CLS]','[SEP]','[PAD]'])):
                         continue
-                    elif(_check_segment_type_is_b(start_index,end_index,batch[i][1].squeeze(0))):
+                    elif(_check_segment_type_is_b(start_index,end_index,batch[1][i])):
                         continue
                     answer = "".join(answer_token)
                     answer_result = (start_index,start_scores[start_index],end_index,end_scores[end_index],answer)
