@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # ask
     context="大同國小有三個職員，王大明是校長，張小美是秘書，陳小玉是總務長"
-    question = "陳小玉的工作是什麼"
+    question = "陳小玉是什麼"
     answer_results,input_decode = bertQA.ask(context,question)
     print(input_decode)
     for answer_result in answer_results:

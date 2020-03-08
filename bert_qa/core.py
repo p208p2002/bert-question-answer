@@ -15,7 +15,7 @@ def use_model(model_name, model_path):
 def make_torch_dataset(*features):
     tensor_features = []
     for feature in features:
-        tensor_feature = torch.tensor([f for f in feature])
+        tensor_feature = torch.tensor([f for f in feature],dtype=torch.long)
         tensor_features.append(tensor_feature)
     return TensorDataset(*tensor_features)
 
@@ -91,7 +91,7 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
 
         token_embeddings = tokenizer.build_inputs_with_special_tokens(input_context_ids,question_ids)
         segment_embeddings = [0]*(len(input_context_ids)+2) + [1]*(len(question_ids)+1)
-        attention_embeddings = [1]*(len(input_context_ids)+2) + [1]*(len(question_ids)+1)
+        attention_embeddings = [1]*len(token_embeddings)
         logger.debug('input token length:%d',len(token_embeddings))
 
         # padding
