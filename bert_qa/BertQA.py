@@ -16,6 +16,7 @@ class BertQA():
         self.model.eval()
     
     def ask(self,context,question,n_best_size=20):
+        '''return format: [(start_index,start_scores,end_index,end_scores,answer,input_decode)]'''
         #
         model,tokenizer,device = self.model, self.tokenizer, self.device
         
@@ -50,7 +51,7 @@ class BertQA():
                         elif(_check_segment_type_is_b(start_index,end_index,batch[1][i])):
                             continue
                         answer = "".join(answer_token)
-                        answer_result = (start_index,start_scores[start_index],end_index,end_scores[end_index],answer)
+                        answer_result = (start_index,start_scores[start_index],end_index,end_scores[end_index],answer,input_decode)
                         answer_results.append(answer_result)
                         logger.debug("batch_index:%d"%(index))
                         # logger.debug("start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"%(answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
@@ -66,6 +67,6 @@ class BertQA():
                 continue
             logger.debug("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
                 %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
-        return answer_results[:n_best_size],input_decode
+        return answer_results[:n_best_size]
         
         
