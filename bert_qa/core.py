@@ -33,9 +33,9 @@ def _check_has_skip_token(check_tokens,skip_tokens):
                 return True
     return False
 
-def _check_segment_type_is_b(start_index,end_index,segment_embeddings):
+def _check_segment_type_is_a(start_index,end_index,segment_embeddings):
     tag_segment_embeddings = segment_embeddings[start_index]
-    if 1 in tag_segment_embeddings:
+    if 0 in tag_segment_embeddings:
         return True
     return False
 
@@ -89,8 +89,8 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
         input_context_ids = context_ids[index:index+window_size]
         logger.debug("input context len:%d"%(len(input_context_ids)))
 
-        token_embeddings = tokenizer.build_inputs_with_special_tokens(input_context_ids,question_ids)
-        segment_embeddings = [0]*(len(input_context_ids)+2) + [1]*(len(question_ids)+1)
+        token_embeddings = tokenizer.build_inputs_with_special_tokens(question_ids,input_context_ids)
+        segment_embeddings =  [0]*(len(question_ids)+1)+[1]*(len(input_context_ids)+2)
         attention_embeddings = [1]*len(token_embeddings)
         logger.debug('input token length:%d',len(token_embeddings))
 

@@ -1,5 +1,5 @@
 from .core import use_model,convert_single_data_to_feature,make_torch_data_loader,make_torch_dataset,to_list, \
-    _get_best_indexes,_check_has_skip_token,_check_segment_type_is_b
+    _get_best_indexes,_check_has_skip_token,_check_segment_type_is_a
 import logging
 from tqdm import tqdm
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class BertQA():
                             continue
                         elif(_check_has_skip_token(check_tokens = answer_token, skip_tokens = ['[CLS]','[SEP]','[PAD]'])):
                             continue
-                        elif(_check_segment_type_is_b(start_index,end_index,batch[1][i])):
+                        elif(_check_segment_type_is_a(start_index,end_index,batch[1][i])):
                             continue
                         answer = "".join(answer_token)
                         answer_result = (start_index,start_scores[start_index],end_index,end_scores[end_index],answer,input_decode)
