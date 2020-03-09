@@ -62,7 +62,7 @@ class BertQA():
         answer_records = []
         answer_results = sorted(answer_results,key=lambda answer_result:answer_result[1]+answer_result[3],reverse=True)
 
-        pbar = tqdm(total=n_best_size)
+        # pbar = tqdm(total=n_best_size)
         n_best_answer_results = []
         for answer_result in answer_results[:]:
             answer_tag = answer_result[4]
@@ -75,7 +75,7 @@ class BertQA():
             logger.debug("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
                 %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
 
-            pbar.update()            
+            # pbar.update()            
             if(len(n_best_answer_results) >= n_best_size):
                 return n_best_answer_results
         return n_best_answer_results
