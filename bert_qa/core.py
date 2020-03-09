@@ -90,7 +90,7 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
         logger.debug("input context len:%d"%(len(input_context_ids)))
 
         token_embeddings = tokenizer.build_inputs_with_special_tokens(question_ids,input_context_ids)
-        segment_embeddings =  [0]*(len(question_ids)+1)+[1]*(len(input_context_ids)+2)
+        segment_embeddings =  [0]*(len(question_ids)+2)+[1]*(len(input_context_ids)+1)
         attention_embeddings = [1]*len(token_embeddings)
         logger.debug('input token length:%d',len(token_embeddings))
 
