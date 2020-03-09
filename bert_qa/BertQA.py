@@ -55,10 +55,17 @@ class BertQA():
                         logger.debug("batch_index:%d"%(index))
                         # logger.debug("start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"%(answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
                 
-                answer_results = sorted(answer_results,key=lambda answer_result:answer_result[1]+answer_result[3],reverse=True)
-                for answer_result in answer_results:
-                    logger.debug("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
-                        %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
+        answer_records = []
+        answer_results = sorted(answer_results,key=lambda answer_result:answer_result[1]+answer_result[3],reverse=True)
+        for answer_result in answer_results:
+            answer_tag = answer_result[4]
+            if(answer_tag not in answer_records):
+                answer_records.append(answer_tag)
+            else:
+                answer_results.remove(answer_result)
+                continue
+            logger.debug("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
+                %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
         return answer_results[:n_best_size],input_decode
         
         
