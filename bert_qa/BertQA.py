@@ -15,7 +15,7 @@ class BertQA():
         self.model.to(device)
         self.model.eval()
     
-    def ask(self,context,question,n_best_size=20):
+    def ask(self,context,question,n_best_size=20,batch_size=4):
         '''return format: [(start_index,start_scores,end_index,end_scores,answer,input_decode)]'''
         #
         model,tokenizer,device = self.model, self.tokenizer, self.device
@@ -23,7 +23,7 @@ class BertQA():
         #
         token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list = convert_single_data_to_feature(context,question,tokenizer,doc_strike=128)
         qc_dataset = make_torch_dataset(token_embeddings_list, segment_embeddings_lsit, attention_embeddings_list)
-        qc_data_loader = make_torch_data_loader(qc_dataset,batch_size=1)
+        qc_data_loader = make_torch_data_loader(qc_dataset,batch_size=batch_size)
         answer_results = []
         for index,batch in enumerate(qc_data_loader):
             batch = [x.to(device) for x in batch]
