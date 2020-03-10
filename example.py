@@ -24,8 +24,7 @@ if __name__ == "__main__":
     context="大同國小有三個職員，王大明是校長，張小美是秘書，陳小玉是總務長"
     question = "陳小玉是什麼"
     answer_results = bertQA.ask(context,question)
-    input_decode = answer_results[-1]
-    print(input_decode)
     for answer_result in answer_results:
+        # print('input_decode',answer_result[5])
         print("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
             %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
