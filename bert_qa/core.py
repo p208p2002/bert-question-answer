@@ -1,6 +1,7 @@
 import logging
 import torch
 from torch.utils.data import TensorDataset, DataLoader, random_split
+import numpy as np
 
 logger = logging.getLogger(__name__)
 def use_model(model_name, model_path):
@@ -121,4 +122,9 @@ def convert_single_data_to_feature(context,question,tokenizer,doc_strike=128):
         segment_embeddings_lsit,
         attention_embeddings_list,
     )
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0) # only difference
 

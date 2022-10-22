@@ -27,4 +27,4 @@ if __name__ == "__main__":
     for answer_result in answer_results:
         # print('input_decode',answer_result[5])
         print("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
-            %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
+            %(answer_result[1]*answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))

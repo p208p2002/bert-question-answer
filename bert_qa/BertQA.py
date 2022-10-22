@@ -1,5 +1,5 @@
 from .core import use_model,convert_single_data_to_feature,make_torch_data_loader,make_torch_dataset,to_list, \
-    _get_best_indexes,_check_has_skip_token,_check_segment_type_is_a
+    _get_best_indexes,_check_has_skip_token,_check_segment_type_is_a,softmax
 import logging
 from tqdm import tqdm
 logger = logging.getLogger(__name__)
@@ -35,6 +35,9 @@ class BertQA():
             batch_end_scores = to_list(end_scores)
 
             for i,(start_scores,end_scores) in enumerate(zip(batch_start_scores,batch_end_scores)):
+                start_scores = softmax(start_scores)
+                end_scores = softmax(end_scores)
+
                 start_indexs = _get_best_indexes(start_scores,n_best_size=n_best_size)
                 end_indexs = _get_best_indexes(end_scores,n_best_size=n_best_size)
                 input_decode = tokenizer.convert_ids_to_tokens(batch[0][i])
@@ -60,7 +63,7 @@ class BertQA():
             pbar.update()
                 
         answer_records = []
-        answer_results = sorted(answer_results,key=lambda answer_result:answer_result[1]+answer_result[3],reverse=True)
+        answer_results = sorted(answer_results,key=lambda answer_result:answer_result[1]*answer_result[3],reverse=True)
 
         # pbar = tqdm(total=n_best_size)
         n_best_answer_results = []
@@ -73,7 +76,7 @@ class BertQA():
                 # answer_results.remove(answer_result)
                 continue
             logger.debug("score:%3.5f start_index:%d(%3.5f) end_index:%d(%3.5f) answer:%s"\
-                %(answer_result[1]+answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
+                %(answer_result[1]*answer_result[3],answer_result[0],answer_result[1],answer_result[2],answer_result[3],answer_result[4]))
 
             # pbar.update()            
             if(len(n_best_answer_results) >= n_best_size):
